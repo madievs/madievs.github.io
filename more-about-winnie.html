@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title id="i93c3-3">More About Madie's Research</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="index,follow"/>
+  <meta name="generator" content="GrapesJS Studio"/>
+  <meta name="description" content="An expansion of some of my research and projects." id="i1ds2-3"/>
+  <meta property="og:title" content="More About Madie's Research"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="./style.css">
+  </head>
+  <body id="ifcg-2" class="gjs-t-body cv-page"><header id="site-header-3" class="top-navigation"><nav aria-label="Main navigation" id="ipb61-2" class="navigation-container"><a href="./index.html" id="inrl4-3" class="gjs-t-link home-link"><span id="id70h-2-2" class="personal-monogram">WvS</span><span id="ihcdy-2-2" class="website-name">More About Winnie</span></a><div id="i8x79-3" class="navigation-links"><a href="./index.html" id="iq7ov-2-2" class="gjs-t-link projects-cv-link">Mom’s Resume</a><details id="more-menu-2-2" class="more-pages-dropdown"><summary id="imgvj-2-2" class="more-pages-toggle">Explore more
+              <img id="igych-2-2" src="https://api.iconify.design/lucide-chevron-down.svg?color=%23244b43" alt="" width="15" height="15" class="navigation-chevron"/></summary><div id="iw6qr-2-2" class="gjs-t-border more-pages-menu"><a href="./more-about-me.html" id="ickuv-2-2" class="gjs-t-link more-about-me-link">More About Me</a><a href="./cv.html" aria-current="page" id="i52mq-2-2" class="gjs-t-link more-about-my-projects-link">More About My Projects</a></div></details></div></nav></header><script>
+      (() => {
+        const storageKey = 'personal-cv-content-v1';
+        const fields = [...document.querySelectorAll('[data-field]')];
+        const status = document.getElementById('save-status');
+        let saved = {};
+        try {
+          saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+          fields.forEach(field => {
+            if (typeof saved[field.dataset.field] === 'string') field.textContent = saved[field.dataset.field];
+          });
+        } catch (error) {
+          status.textContent = 'Browser storage is unavailable. Print to keep a copy.';
+        }
+        let timer;
+        fields.forEach(field => {
+          field.addEventListener('input', () => {
+            status.textContent = 'Saving your changes…';
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+              fields.forEach(item => saved[item.dataset.field] = item.textContent);
+              try {
+                localStorage.setItem(storageKey, JSON.stringify(saved));
+                status.textContent = 'Saved in this browser. Your changes stay on this device.';
+              } catch (error) {
+                status.textContent = 'Unable to save locally. Print to keep a copy.';
+              }
+            }, 400);
+          });
+          field.addEventListener('paste', event => {
+            event.preventDefault();
+            const text = event.clipboardData.getData('text/plain');
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.setStartAfter(node);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            field.dispatchEvent(new Event('input', {
+              bubbles: true
+            }));
+          });
+        });
+
+        const photo = document.getElementById('profile-photo');
+        try {
+          const previousPhoto = localStorage.getItem('personal-cv-photo-v1');
+          if (previousPhoto) {
+            photo.src = previousPhoto;
+            photo.classList.remove('p-5');
+            photo.alt = 'Personal profile photo';
+          }
+        } catch (error) {}
+        document.getElementById('photo-input').addEventListener('change', event => {
+          const file = event.target.files[0];
+          if (!file) return;
+          if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+            status.textContent = 'Please choose a JPEG, PNG, or WebP photo.';
+            return;
+          }
+          if (file.size > 3 * 1024 * 1024) {
+            status.textContent = 'Please choose a photo smaller than 3 MB.';
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            photo.src = reader.result;
+            photo.alt = 'Personal profile photo';
+            photo.classList.remove('p-5');
+            try {
+              localStorage.setItem('personal-cv-photo-v1', reader.result);
+              status.textContent = 'Photo saved in this browser.';
+            } catch (error) {
+              status.textContent = 'Photo added, but could not be saved locally.';
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+
+        const menu = document.getElementById('more-menu');
+        menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => menu.open = false));
+        document.addEventListener('click', event => {
+          if (!menu.contains(event.target)) menu.open = false;
+        });
+        document.addEventListener('keydown', event => {
+          if (event.key === 'Escape') menu.open = false;
+        });
+
+        const panel = document.getElementById('profile-panel');
+        const hiddenForPrint = [
+          document.getElementById('site-header'),
+          document.getElementById('page-footer'),
+          ...document.querySelectorAll('.editor-control')
+        ];
+        let printing = false;
+        let previousDetails = [];
+        const preparePrint = () => {
+          if (printing) return;
+          printing = true;
+          if (document.activeElement) document.activeElement.blur();
+          hiddenForPrint.forEach(element => element.hidden = true);
+          panel.classList.remove('sticky');
+          panel.classList.add('static');
+          previousDetails = [...document.querySelectorAll('#projects details')].map(element => [element, element.open]);
+          previousDetails.forEach(([element]) => element.open = true);
+        };
+        const restorePrint = () => {
+          hiddenForPrint.forEach(element => element.hidden = false);
+          panel.classList.remove('static');
+          panel.classList.add('sticky');
+          previousDetails.forEach(([element, open]) => element.open = open);
+          printing = false;
+        };
+        window.addEventListener('beforeprint', preparePrint);
+        window.addEventListener('afterprint', restorePrint);
+        document.getElementById('print-button').addEventListener('click', () => {
+          preparePrint();
+          window.print();
+          restorePrint();
+        });
+      })();
+    </script><script data-s<="" body=""></script><main id="cv-3" __nc="" class="two-column-cv-layout"><aside id="profile-panel-3" aria-label="Personal profile" class="fixed-profile-panel"><div id="ia5j7t-2" class="profile-content"><div id="iiocfy-2" class="profile-photo-area"><div id="itx5dnu" class="profile-photo-frame"><img src="https://cdn.grapesjs.com/workspaces/cmvimae0bcbexjne1lzliszo5/assets/1c378c83-6e2f-4938-a074-1b208515c47f__screenshot-2026-10-27-at-17-49-19-photo-google-photos.png" id="i7mpszw-2"/></div></div><div id="ink7k9k" class="name-and-profession"><h1 role="textbox" aria-label="Your name" data-field="name" spellcheck="false" id="ie2v2-2" class="editable-name">Winnie</h1></div><div id="i64mp-2" class="contact-information"><h2 class="contact-heading" id="io262f">Connect with my mom</h2><div class="email-contact"><img src="https://api.iconify.design/lucide-mail.svg?color=%23cbe2b5" width="16" height="16" alt="" class="email-icon"/><span role="textbox" aria-label="Email address" data-field="email" id="ihfkz-2" class="editable-email">insert new email for this only</span></div><div class="location-contact"><img src="https://static.vecteezy.com/system/resources/previews/044/267/763/non_2x/outline-drawing-of-oklahoma-state-map-free-png.png" width="16" height="16" alt="" id="it7tl-4" class="location-icon"/><span role="textbox" aria-label="Your location" data-field="location" id="iej1t-2" class="editable-location">[Norman, Oklahoma]</span></div><div class="website-contact"><img src="https://www.vikingcamps.com/wp-content/uploads/2024/01/linkedin-logo-linkedin-icon-transparent-free-png.webp" width="16" height="16" alt="" id="iukyr-4" class="website-icon"/><span role="textbox" aria-label="Your website or LinkedIn URL" data-field="website" id="ibiel-2" class="editable-website">www.linkedin.com/in/madie-v</span></div></div><div class="personal-statement"><h2 class="personal-statement-heading">What drives me</h2><p role="textbox" aria-multiline="true" aria-label="Personal statement" data-field="statement" id="iu0j4-2" class="editable-personal-statement">I love the color yellow and my stuffed monkeys!</p></div><div class="editor-control print-cv-actions"></div></div></aside><div id="isigh-3" class="cv-document-column"><div id="id0fg-2-2" class="cv-introduction"><h2 id="iyagy-2-2" class="gjs-t-h1 cv-page-heading">More About Winnie</h2></div><div id="irrcw-2-2" class="editor-control projects-editing-note"><div id="ityai-2-2" class="editing-help"><p id="ionuh-2-2" class="editing-tip">“People should be more like animals . . . they should be more intuitive; they should not be too conscious of what they do while they do it.” - Albert Einstien</p></div></div><section id="projects-2-2" aria-labelledby="projects-heading" data-js="project-showcase" class="more-about-my-projects-section"><div id="ixt1o7-2" class="project-showcase-list"><article id="isq3n4-2-2" aria-labelledby="i9olr4" data-js="project-card" data-project="01" class="gjs-t-border project-showcase-card"><div id="ity1ph-2" class="project-showcase-media"><div id="ivmiqh4" class="project-image-slot"><img data-js="preview" alt="Project 01 image" hidden src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+" class="project-image-preview"/><img src="https://cdn.grapesjs.com/workspaces/cmvimae0bcbexjne1lzliszo5/assets/60f32db9-2905-43dc-bca8-5a26c1636699__screenshot-2026-10-27-at-18-06-12-img5844.jpg-jpeg-image-689-919-pixels.png" id="iklqf55"/></div><div id="i0y76vv" class="project-image-slot"><img data-js="preview" alt="Project 01 image" hidden src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+" class="project-image-preview"/><img src="https://cdn.grapesjs.com/workspaces/cmvimae0bcbexjne1lzliszo5/assets/447d701e-0e89-4da6-a2b6-d456963cd1ca__screenshot-2026-10-27-at-18-04-54-photo-google-photos.png" id="iieat4p"/></div></div><div id="iy7xwv-2" class="project-showcase-content"><h3 id="i9olr4-2-2" role="textbox" aria-label="Project 01 title" data-field="project-name" class="project-showcase-title project-customizable">Background</h3><p id="ie43b5-2-2" role="textbox" aria-multiline="true" aria-label="Project 01 detailed description" data-field="project-description" class="project-showcase-description project-customizable">I am a dedicated research assistant with a particular interest in interdisciplinary collaboration, sustained periods of contemplation, and the strategic distribution of emotional support to my colleagues. I specialize in timed breaks and hands on investigative research.</p><div class="project-showcase-field"><span id="ilbh2vn" class="project-story-label">collaborators</span><p role="textbox" aria-label="Project 01 role" data-field="project-01-role" id="ips5pvj" class="project-showcase-value project-customizable">Madeline van Staveren and Rose Charbonnou</p></div><div class="project-showcase-field"><span id="iovndo-2-2" class="project-story-label">Tools &amp; methods</span><p id="ii8dk6-2-2" role="textbox" aria-label="Project 01 tools and methods" data-field="project-tools" class="project-showcase-value project-customizable">Naps, Kisses, Tag</p></div><div id="ip6fxan" class="project-showcase-field"></div></div></article><article id="isq3n4-2-2-2" aria-labelledby="i9olr4" data-js="project-card" data-project="01" class="gjs-t-border project-showcase-card"><div id="ity1ph-2-6" class="project-showcase-media"><div id="ivmiqh4-6" class="project-image-slot"><img data-js="preview" alt="Project 01 image" hidden src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+" id="i5dmnh" class="project-image-preview"/><img src="https://cdn.grapesjs.com/workspaces/cmvimae0bcbexjne1lzliszo5/assets/6619e957-791c-4c0f-9997-fd537d14c8a3__screenshot-2026-10-27-at-18-05-00-photo-google-photos.png" id="iklqf55-7"/></div><div id="i0y76vv-6" class="project-image-slot"><img data-js="preview" alt="Project 01 image" hidden src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+" class="project-image-preview"/><img src="https://cdn.grapesjs.com/workspaces/cmvimae0bcbexjne1lzliszo5/assets/d3bd8665-974c-454c-84aa-98e17d64d6c1__screenshot-2026-10-27-at-18-04-42-photo-google-photos.png" id="iieat4p-2"/></div><div id="i0y76vv-6-2" class="project-image-slot"><img data-js="preview" alt="Project 01 image" hidden src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+" class="project-image-preview"/><img src="https://cdn.grapesjs.com/workspaces/cmvimae0bcbexjne1lzliszo5/assets/faf38eff-d181-4f2f-b9bb-05dba05b5ab8__screenshot-2026-10-27-at-18-19-30-photo-google-photos.png" id="iieat4p-2-4"/></div></div><div id="iy7xwv-2-2" class="project-showcase-content"><h3 id="i9olr4-2-2-2" role="textbox" aria-label="Project 01 title" data-field="project-name" class="project-showcase-title project-customizable">Research Experience</h3><p id="ie43b5-2-2-2" role="textbox" aria-multiline="true" aria-label="Project 01 detailed description" data-field="project-description" class="project-showcase-description project-customizable">I’ve spent the past 9 months conducting and documenting an insurmountable about of sensory research. My primary focus is the taste and texture of various object I find out on adventures. </p><div class="project-showcase-field"><span id="ilbh2vn-2" class="project-story-label">collaborators</span><p role="textbox" aria-label="Project 01 role" data-field="project-01-role" id="ips5pvj-2" class="project-showcase-value project-customizable">Madeline van Staveren and Rose Charbonnou</p></div><div class="project-showcase-field"><span id="iovndo-2-2-2" class="project-story-label">Tools &amp; methods</span><p id="ii8dk6-2-2-2" role="textbox" aria-label="Project 01 tools and methods" data-field="project-tools" class="project-showcase-value project-customizable">Licking and Biting</p></div><div id="ip6fxan-2" class="project-showcase-field"><span id="igxa2k" class="project-story-label">Outcomes &amp; learning</span><p id="ibsnkm-2-2-2" role="textbox" aria-multiline="true" aria-label="Project 01 outcomes" data-field="project-more" class="project-showcase-value project-customizable">I’ve discovered a massive variation in the sensory output of objects across a wide range of area. The most notable outcome of my research was discovered while documenting trends in the taste and texture of objects across space. Objects found in the same location, within a variable area depending on location type, tend to have similarities with each other. Ex: Items that I’ve found in the ‘kitchen’ all seem to taste pleasant, while objects found in the grass tend to have adverse effects when consumed.  </p></div></div></article><article data-js="project-card" data-project="03" aria-label="Project 03" class="gjs-t-border project-showcase-card"><div id="iwxnfa" class="project-showcase-media"><div id="ifcj4j" class="project-image-slot"><img data-js="preview" alt="Project 03 image" hidden src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+" class="project-image-preview"/><img src="https://cdn.grapesjs.com/workspaces/cmvimae0bcbexjne1lzliszo5/assets/60f32db9-2905-43dc-bca8-5a26c1636699__screenshot-2026-10-27-at-18-06-12-img5844.jpg-jpeg-image-689-919-pixels.png" id="i9sihw"/></div><div id="ifcj4j-2" class="project-image-slot"><img data-js="preview" alt="Project 03 image" hidden src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+" class="project-image-preview"/><img src="https://cdn.grapesjs.com/workspaces/cmvimae0bcbexjne1lzliszo5/assets/f50ac17c-4c9b-44bd-880a-edc0820b1c20__screenshot-2026-10-27-at-18-07-51-photo-google-photos.png" id="i2rokj"/></div><div id="ifcj4j-2-2" class="project-image-slot"><img data-js="preview" alt="Project 03 image" hidden src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+" class="project-image-preview"/><img src="https://cdn.grapesjs.com/workspaces/cmvimae0bcbexjne1lzliszo5/assets/78dd818a-b47d-4799-84d0-dfd35a05bfb3__screenshot-2026-10-27-at-18-04-26-photo-google-photos.png" id="iroexg"/></div></div><div id="inv7cy" class="project-showcase-content"><h3 role="textbox" aria-label="Project 03 title" data-field="project-03-name" id="ifcibi" class="project-showcase-title project-customizable">The Me Outside of Work</h3><p role="textbox" aria-multiline="true" aria-label="Project 03 detailed description" data-field="project-03-description" id="imqin47" class="project-showcase-description project-customizable">Despite my dedication to my craft. I can be a fun loving trouble maker outside of work!
+                </p><div id="icxlbk"><br id="ih8aqg"/></div><div id="isfery">I often enjoy doing crafts with my moms, acrobatics, and playing tag! </div><p></p></div></article></div><script data-scope="project-showcase" id="igebbo-2">
+            (() => {
+              const root = document.querySelector('[data-js="project-showcase"]');
+              if (!root) return;
+              root.querySelectorAll('[data-js="project-card"]').forEach(card => {
+                card.querySelectorAll('[data-js="upload"]').forEach(input => {
+                  const group = input.closest('[data-js="image-upload-group"]') || card;
+                  const preview = group.querySelector('[data-js="preview"]');
+                  const status = group.querySelector('[data-js="image-status"]');
+                  if (!preview || !status) return;
+                  const key = 'personal-project-image-' + (group.dataset.imageKey || card.dataset.project);
+                  const show = image => {
+                    preview.src = image;
+                    preview.hidden = false;
+                    group.querySelectorAll('[data-js="placeholder"]').forEach(item => item.hidden = true);
+                  };
+                  try {
+                    const previous = localStorage.getItem(key);
+                    if (previous) show(previous);
+                  } catch (error) {}
+                  input.addEventListener('change', () => {
+                    const file = input.files[0];
+                    if (!file) return;
+                    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 3 * 1024 * 1024) {
+                      status.textContent = 'Choose a JPEG, PNG, or WebP image up to 3 MB.';
+                      input.value = '';
+                      return;
+                    }
+                    const reader = new FileReader();
+                    reader.onerror = () => status.textContent = 'Unable to read this image. Please try another file.';
+                    reader.onload = () => {
+                      show(reader.result);
+                      try {
+                        localStorage.setItem(key, reader.result);
+                        status.textContent = 'Image saved in this browser.';
+                      } catch (error) {
+                        status.textContent = 'Image added, but browser storage is full or unavailable. Print to keep a copy.';
+                      }
+                      input.value = '';
+                    };
+                    reader.readAsDataURL(file);
+                  });
+                });
+              });
+            })();
+          </script></section><section aria-labelledby="project-context-heading" id="i6hr4g-3" hidden class="project-story-section"></section><section class="project-next-step gjs-t-border"><p class="project-story-label">Keep exploring</p><h2 class="gjs-t-h2">Get to know the person behind the projects.</h2><div class="project-page-actions"><a href="./more-about-me.html" id="ikzwm2-2" class="gjs-t-button project-page-button">More about my mom</a><a href="./index.html" id="i91ir2-2" class="gjs-t-link project-return-link"> View my mom’s CV →</a></div></section><footer id="page-footer-2-2" class="document-footer"><span id="i25lqg-2-2">A work in progress. Always learning.</span><a id="i4wj8f-2-2" href="#cv" class="gjs-t-link back-to-top-link">Back to top ↑</a></footer></div></main></body>
+</html>
